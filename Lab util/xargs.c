@@ -3,15 +3,15 @@
 #include "user/user.h"
 
 int
-fmtpargs(char **pargs, char *buf, int n) {
+fmtpargs(char **pargs, char *buf, int n)
+{
   int t = 0;
   char *h = buf + 1, *p = buf + 1;
   for (int i = 1; i < n; ++i) {
     if (buf[i] == '\\' || buf[i] == '\"') {
       pargs[t] = malloc(p - h);
-      memcpy(pargs[t++], h, p - h);
-      p += 2;
-      h = p;
+      memcpy(pargs[t++], h, p++ - h);
+      h = ++p;
       ++i;
     } else {
       ++p;
@@ -21,17 +21,16 @@ fmtpargs(char **pargs, char *buf, int n) {
 }
 
 void
-fmtsargs(char **sargs, int at, char *buf, int n) {
+fmtsargs(char **sargs, int at, char *buf, int n)
+{
   char *h = buf, *p = buf;
   for (int i = 0; i <= n; ++i) {
     if ((buf[i] == ' ' && (p - h)) || buf[i] == '\n') {
       sargs[at] = malloc(p - h);
       memcpy(sargs[at++], h, p - h);
-      ++p;
-      h = p;
+      h = ++p;
     } else if (buf[i] == ' ') {
-      ++h;
-      ++p;
+      h = ++p;
     } else {
       ++p;
     }
@@ -51,12 +50,12 @@ main(int argc, char *argv[])
   char *args[MAXARG + 1];
   int at = 0;
 
-  if (!strcmp(argv[1], "-n")) {
+  if (!strcmp(argv[1], "-n")) {  // xargs -n 1 ...
     for (int i = 3; i < argc; ++i) {
       args[at] = malloc(sizeof argv[i]);
       memcpy(args[at++], argv[i], sizeof argv[i]);
     }
-    args[at] = malloc(24);
+    args[at] = malloc(24);  // assume max length 24
     char *pargs[MAXARG];
     int t = fmtpargs(pargs, buf, n);  // pargs[0...t]
     for (int i = 0; i < t; ++i) {

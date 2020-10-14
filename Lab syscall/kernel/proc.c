@@ -694,3 +694,14 @@ procdump(void)
     printf("\n");
   }
 }
+
+int
+getnproc(void)
+{
+  int n = 0;
+  struct proc *p;
+  for (p = proc; p < &proc[NPROC]; ++p) { // or NPROC -> nextpid
+    if (p->state != UNUSED) ++n;
+  }
+  return n;
+}
